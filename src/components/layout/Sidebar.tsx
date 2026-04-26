@@ -1,8 +1,8 @@
 import { motion } from 'motion/react';
 import { cn } from '../../lib/firebase';
 import { NAV_ITEMS, ROLE_LABELS } from '../../constants';
-import { UserRole } from '../../lib/firebase';
-import { LogOut, Cloud, ChevronRight } from 'lucide-react';
+import { UserRole, updateDoc, doc, db } from '../../lib/firebase';
+import { LogOut, Cloud, ChevronRight, Settings } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
@@ -14,6 +14,14 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, setActiveTab, role, onLogout, user }: SidebarProps) {
   const filteredNav = NAV_ITEMS.filter(item => item.roles.includes(role));
+
+  const handleRoleChange = async (newRole: UserRole) => {
+    try {
+      await updateDoc(doc(db, 'users', user.uid), { role: newRole });
+    } catch (error) {
+      console.error("Failed to change role", error);
+    }
+  };
 
   return (
     <aside className="w-64 flex-shrink-0 hidden lg:flex flex-col border-r border-gray-200 bg-white h-screen sticky top-0">
@@ -50,6 +58,26 @@ export function Sidebar({ activeTab, setActiveTab, role, onLogout, user }: Sideb
       </nav>
 
       <div className="p-4 border-t border-gray-100 space-y-4">
+        <div className="px-3">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 ml-1">Simulate Role</p>
+          <div className="grid grid-cols-2 gap-1.5">
+            {Object.keys(ROLE_LABELS).map((r) => (
+              <button
+                key={r}
+                onClick={() => handleRoleChange(r as UserRole)}
+                className={cn(
+                  "p-1.5 text-[9px] font-bold rounded-lg transition-all border text-center whitespace-nowrap",
+                  role === r 
+                    ? "bg-blue-600 text-white border-blue-600 shadow-sm" 
+                    : "bg-gray-50 text-gray-500 border-gray-100 hover:border-gray-200"
+                )}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="bg-gray-50 p-3 rounded-2xl flex items-center gap-3 group cursor-default">
           <img 
             src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}`} 
