@@ -15,6 +15,16 @@ import { InnovatorDashboard } from './components/dashboard/InnovatorDashboard';
 import { MentorDashboard } from './components/dashboard/MentorDashboard';
 import { FunderDashboard } from './components/dashboard/FunderDashboard';
 import { CoordinatorDashboard } from './components/dashboard/CoordinatorDashboard';
+import { Onboarding } from './components/auth/Onboarding';
+import { InviteUsers } from './components/dashboard/InviteUsers';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Rocket, 
+  Search, 
+  Bell, 
+  Clock, 
+  LayoutGrid 
+} from 'lucide-react';
 
 export default function App() {
   const { user, profile, loading } = useAuth();
@@ -72,6 +82,10 @@ export default function App() {
         </motion.div>
       </div>
     );
+  }
+
+  if (profile && !profile.isOnboarded) {
+    return <Onboarding user={user} onComplete={() => window.location.reload()} />;
   }
 
   const renderDashboard = () => {
@@ -138,6 +152,7 @@ export default function App() {
                 {activeTab === 'dashboard' ? renderDashboard() : 
                  activeTab === 'innovations' ? <InnovationsView role={profile.role} /> :
                  activeTab === 'mentorship' ? <MentorshipView /> :
+                 activeTab === 'invites' ? <InviteUsers /> :
                  (
                   <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
                     <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">

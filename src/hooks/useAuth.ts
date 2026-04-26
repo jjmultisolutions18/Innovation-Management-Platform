@@ -25,6 +25,7 @@ export function useAuth() {
               displayName: firebaseUser.displayName || 'New Explorer',
               photoURL: firebaseUser.photoURL || '',
               role: 'INNOVATOR',
+              isOnboarded: false,
               createdAt: serverTimestamp(),
             };
             await setDoc(userRef, newProfile);

@@ -37,12 +37,17 @@ service cloud.firestore {
 
     // --- Collections ---
 
+    match /invitations/{inviteId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || isCoordinator() || isManager();
+    }
+
     match /users/{userId} {
       // Users can read any profile (for directory/collaboration) but only edit their own (limited)
       // Admins and Managers can edit all
       allow read: if isSignedIn();
       allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isAdmin() || isManager() || (isOwner(userId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'photoURL']));
+      allow update: if isAdmin() || isManager() || (isOwner(userId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'photoURL', 'role', 'isOnboarded']));
     }
 
     match /programmes/{programmeId} {

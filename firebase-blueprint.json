@@ -10,9 +10,23 @@
         "displayName": { "type": "string" },
         "photoURL": { "type": "string" },
         "role": { "type": "string", "enum": ["ADMIN", "COORDINATOR", "INNOVATOR", "MENTOR", "FUNDER", "MANAGER"] },
+        "isOnboarded": { "type": "boolean", "description": "Whether the user has completed role selection" },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["uid", "email", "role"]
+      "required": ["uid", "email"]
+    },
+    "invitation": {
+      "title": "Ecosystem Invitation",
+      "description": "Pre-assigned role for a specific email.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "inviterId": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "role"]
     },
     "programme": {
       "title": "Innovation Programme",
@@ -85,6 +99,7 @@
   },
   "firestore": {
     "/users/{userId}": { "schema": "user", "description": "User profiles" },
+    "/invitations/{inviteId}": { "schema": "invitation", "description": "Pending ecosystem invites" },
     "/programmes/{programmeId}": { "schema": "programme", "description": "Innovation programmes" },
     "/innovations/{innovationId}": { "schema": "innovation", "description": "Innovation projects" },
     "/sessions/{sessionId}": { "schema": "session", "description": "Mentorship session logs" },

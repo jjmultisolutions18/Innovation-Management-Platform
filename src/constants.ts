@@ -15,7 +15,8 @@ import {
   Rocket,
   TrendingUp,
   Cpu,
-  Target
+  Target,
+  UserPlus
 } from 'lucide-react';
 import { UserRole } from './lib/firebase';
 
@@ -44,6 +45,7 @@ export const NAV_ITEMS = [
   { id: 'innovations', label: 'Innovations', icon: Lightbulb, roles: ['ADMIN', 'COORDINATOR', 'INNOVATOR', 'MENTOR', 'MANAGER'] },
   { id: 'programmes', label: 'Programmes', icon: Shield, roles: ['ADMIN', 'COORDINATOR', 'MANAGER', 'FUNDER'] },
   { id: 'mentorship', label: 'Mentorship', icon: Users, roles: ['ADMIN', 'COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+  { id: 'invites', label: 'Invitations', icon: UserPlus, roles: ['ADMIN', 'COORDINATOR', 'MANAGER'] },
   { id: 'impact', label: 'Impact & KPIs', icon: BarChart3, roles: ['ADMIN', 'COORDINATOR', 'FUNDER', 'MANAGER'] },
   { id: 'documents', label: 'Documents', icon: FileText, roles: ['ADMIN', 'COORDINATOR', 'INNOVATOR', 'MENTOR'] },
   { id: 'settings', label: 'Settings', icon: Settings, roles: ['ADMIN'] },
