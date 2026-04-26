@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "user": {
+      "title": "User Profile",
+      "description": "User profile with role-based access control.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["ADMIN", "COORDINATOR", "INNOVATOR", "MENTOR", "FUNDER", "MANAGER"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "programme": {
+      "title": "Innovation Programme",
+      "description": "A specific innovation track or challenge.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "type": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "innovation": {
+      "title": "Innovation Project",
+      "description": "The central project record for an innovator.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "problemStatement": { "type": "string" },
+        "targetMarket": { "type": "string" },
+        "innovatorId": { "type": "string" },
+        "coordinatorId": { "type": "string" },
+        "mentorId": { "type": "string" },
+        "programmeId": { "type": "string" },
+        "stage": { "type": "integer", "description": "0-5" },
+        "trlLevel": { "type": "integer" },
+        "frlLevel": { "type": "integer" },
+        "status": { "type": "string" },
+        "sector": { "type": "string" },
+        "location": { "type": "string" },
+        "progress": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "innovatorId", "programmeId"]
+    },
+    "session": {
+      "title": "Mentorship Session",
+      "description": "Log of mentor activity.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "mentorId": { "type": "string" },
+        "innovatorId": { "type": "string" },
+        "innovationId": { "type": "string" },
+        "date": { "type": "string" },
+        "notes": { "type": "string" },
+        "recommendations": { "type": "string" },
+        "hours": { "type": "number" }
+      },
+      "required": ["mentorId", "innovationId"]
+    },
+    "kpi": {
+      "title": "KPI Metric",
+      "description": "Aggregated impact metrics.",
+      "type": "object",
+      "properties": {
+        "programmeId": { "type": "string" },
+        "metric": { "type": "string" },
+        "value": { "type": "number" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["metric", "value"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": "user", "description": "User profiles" },
+    "/programmes/{programmeId}": { "schema": "programme", "description": "Innovation programmes" },
+    "/innovations/{innovationId}": { "schema": "innovation", "description": "Innovation projects" },
+    "/sessions/{sessionId}": { "schema": "session", "description": "Mentorship session logs" },
+    "/kpis/{kpiId}": { "schema": "kpi", "description": "Impact data" }
+  }
+}
