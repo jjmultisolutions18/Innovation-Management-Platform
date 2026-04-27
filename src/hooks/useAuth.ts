@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { auth, db, doc, onSnapshot, User, setDoc, UserProfile, UserRole, serverTimestamp } from '../lib/firebase';
+import { auth, db, doc, onSnapshot, User, setDoc, UserProfile, UserRole, serverTimestamp, collection, query, where, getDocs, updateDoc } from '../lib/firebase';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -11,27 +11,53 @@ export function useAuth() {
       setUser(firebaseUser);
       
       if (firebaseUser) {
-        // Listen to user profile
         const userRef = doc(db, 'users', firebaseUser.uid);
         const unsubscribeProfile = onSnapshot(userRef, async (snapshot) => {
           if (snapshot.exists()) {
             setProfile(snapshot.data() as UserProfile);
+            setLoading(false);
           } else {
-            // New user - default to INNOVATOR for demo purposes
-            // In a real app, this might be handled by an invite or admin
+            // Check for invitations matching the email
+            let assignedRole: UserRole = 'INNOVATOR';
+            let isOnboarded = false;
+            
+            try {
+              const inviteQuery = query(
+                collection(db, 'invitations'), 
+                where('email', '==', firebaseUser.email?.toLowerCase()),
+                where('status', '==', 'pending')
+              );
+              const inviteSnap = await getDocs(inviteQuery);
+              
+              if (!inviteSnap.empty) {
+                const inviteDoc = inviteSnap.docs[0];
+                assignedRole = inviteDoc.data().role as UserRole;
+                isOnboarded = true; // Skip onboarding since role was pre-assigned
+                
+                // Mark invite as accepted
+                await updateDoc(doc(db, 'invitations', inviteDoc.id), {
+                  status: 'accepted',
+                  acceptedAt: serverTimestamp(),
+                  uid: firebaseUser.uid
+                });
+              }
+            } catch (err) {
+              console.error("Error checking invitations:", err);
+            }
+
             const newProfile: UserProfile = {
               uid: firebaseUser.uid,
               email: firebaseUser.email || '',
               displayName: firebaseUser.displayName || 'New Explorer',
               photoURL: firebaseUser.photoURL || '',
-              role: 'INNOVATOR',
-              isOnboarded: false,
+              role: assignedRole,
+              isOnboarded: isOnboarded,
               createdAt: serverTimestamp(),
             };
             await setDoc(userRef, newProfile);
             setProfile(newProfile);
+            setLoading(false);
           }
-          setLoading(false);
         });
         
         return () => unsubscribeProfile();
