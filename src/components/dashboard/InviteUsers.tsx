@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   UserPlus, 
@@ -176,9 +176,22 @@ export function InviteUsers() {
                       )}>
                         {invite.status}
                       </span>
-                      <button className="p-2 text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button 
+                          onClick={() => {
+                            const url = window.location.origin;
+                            navigator.clipboard.writeText(url);
+                            alert('Invitation link copied! Share this URL with ' + invite.email);
+                          }}
+                          className="p-2 text-gray-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Copy App URL"
+                        >
+                          <UserPlus className="w-4 h-4" />
+                        </button>
+                        <button className="p-2 text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))
